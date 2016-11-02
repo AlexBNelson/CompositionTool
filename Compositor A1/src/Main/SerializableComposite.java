@@ -15,9 +15,8 @@ import java.util.List;
  *
  * @author Alex Nelson
  */
-//TODO Assess whether this can be done in an object-oriented way
-//TODO Use java serialization to encode and create file
-public   class SerializableComposite implements java.io.Serializable{
+
+public class SerializableComposite implements java.io.Serializable{
     private BufferedImage image;
     private List<CompositionElement> lines;
 
@@ -34,4 +33,13 @@ public   class SerializableComposite implements java.io.Serializable{
         return lines;
     }
     
+    public void addElement(CompositionElement ce){
+        lines.add(ce);
+        
+    }
+    
+    public void clearSerCom(){
+        image=null;
+        lines=null;
+    }
 }

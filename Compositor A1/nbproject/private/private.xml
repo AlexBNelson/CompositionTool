@@ -3,16 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/SerializableComWriter.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/CompositionLine.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/CompositorA1.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/PanelA1.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/ReadSerializableCom.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/CompositionElement.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/ListenerWriteSer.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/SerializableComReader.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/CompositionRect.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/WriteSerializableCom.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/CompositeLabel.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/ImageRead.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/SerializableComposite.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/ListenerReadSer.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/MyCustomFilter.java</file>
         </group>
     </open-files>
 </project-private>

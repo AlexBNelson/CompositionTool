@@ -5,6 +5,9 @@
  */
 package Main;
 
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,22 +18,36 @@ import java.io.ObjectOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author Alex Nelson
  */
+
+//IMPLEMENT EXIT FUNCTION
+//CANT SEEM TO PROPERLY IMPLEMENT OPTIONPANE
+//USING PALETTE
 public class PanelA1 extends javax.swing.JFrame {
 
     
+    private Point pointStart;//Interim variable for drawing CompositionElements
+    private Point pointEnd;//Interim variable for drawing CompositionElements
+    private SerializableComposite serComField;
     /**
      * Creates new form NewJFrame
      */
     public PanelA1() {
         initComponents();
+        initUserGen();
+        
     }
-
+private void initUserGen(){// Custom initlialization code
+    jPanel1.add(label1);//WILL NEED TO LOOK INTO PRESENTATION OF LABEL
+    
+    
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,30 +58,40 @@ public class PanelA1 extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
-        jPanel1 = new javax.swing.JPanel();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         Open = new javax.swing.JMenuItem();
-        Exit = new javax.swing.JMenuItem();
+        Save = new javax.swing.JMenuItem();
+        New = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
+        DrawL = new javax.swing.JMenuItem();
+        DrawR = new javax.swing.JMenuItem();
+        DrawCustom = new javax.swing.JMenuItem();
+        CreateCustom = new javax.swing.JMenuItem();
 
         fileChooser.setDialogTitle("This is my open dialog");
         fileChooser.setFileFilter(new MyCustomFilter());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
+        jLayeredPane1.setLayout(jLayeredPane1Layout);
+        jLayeredPane1Layout.setHorizontalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 400, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jLayeredPane1Layout.setVerticalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 258, Short.MAX_VALUE)
         );
 
         jMenu3.setText("File");
+        jMenu3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu3ActionPerformed(evt);
+            }
+        });
 
         Open.setText(" Open");
         Open.addActionListener(new java.awt.event.ActionListener() {
@@ -74,17 +101,53 @@ public class PanelA1 extends javax.swing.JFrame {
         });
         jMenu3.add(Open);
 
-        Exit.setText(" Exit");
-        Exit.addActionListener(new java.awt.event.ActionListener() {
+        Save.setText("Save");
+        Save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitActionPerformed(evt);
+                SaveActionPerformed(evt);
             }
         });
-        jMenu3.add(Exit);
+        jMenu3.add(Save);
+
+        New.setText("New");
+        New.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NewActionPerformed(evt);
+            }
+        });
+        jMenu3.add(New);
 
         jMenuBar2.add(jMenu3);
 
         jMenu4.setText("Edit");
+
+        DrawL.setText("Draw Line");
+        DrawL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DrawLActionPerformed(evt);
+            }
+        });
+        jMenu4.add(DrawL);
+
+        DrawR.setText("Draw Rect");
+        DrawR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DrawRActionPerformed(evt);
+            }
+        });
+        jMenu4.add(DrawR);
+
+        DrawCustom.setText("Draw Custom");
+        DrawCustom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DrawCustomActionPerformed(evt);
+            }
+        });
+        jMenu4.add(DrawCustom);
+
+        CreateCustom.setText("Create Custom");
+        jMenu4.add(CreateCustom);
+
         jMenuBar2.add(jMenu4);
 
         setJMenuBar(jMenuBar2);
@@ -93,34 +156,32 @@ public class PanelA1 extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLayeredPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLayeredPane1)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_ExitActionPerformed
-
     private void OpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenActionPerformed
-        
+        //Opens and deserializes image/composition composite placing
+        //it in the CompositeLabel label1 in the JPanel
         int returnVal = fileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
         File file = fileChooser.getSelectedFile();
-        //May need to be placed in try statement
-        SerializableComposite serCom=(new SerializableComReader(file)).getSerCom();
+        
+     serComField=(new SerializableComReader(file)).getSerCom();
         
         
         try {
-            jPanel1.add(new JLabel(new ImageIcon(serCom.getImage())));
+            for(int i=0; i<serComField.getLines().size(); i++) {
+                jLayeredPane1.add(new ComElemJLab(serComField.getLines().get(i)));
             
-          // TODO DECODE SERIALIZABLE FILE AND DISPLAY BUFFEREDIMAGE 
-          //AND PRIMITIVES SEPARATELY
+            }
+            
           
         }catch (Exception ex) {
           System.out.println("problem accessing file"+file.getAbsolutePath());
@@ -130,15 +191,71 @@ public class PanelA1 extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_OpenActionPerformed
 
+    private void SaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveActionPerformed
+        fileChooser.showSaveDialog(this);//PUT IN TRY STATEMENT FOR Headless EXCEPTION??
+            
+    }//GEN-LAST:event_SaveActionPerformed
+
+    private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenu3ActionPerformed
+
+    private void DrawLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawLActionPerformed
+        //SORT OUT NEW ITEM FIRST
+        label1.addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    pointStart = e.getPoint();
+                }
+
+                public void mouseReleased(MouseEvent e) {
+                    pointEnd = e.getPoint();
+                }});
+        double[] xp={pointStart.getX(), pointEnd.getX()};
+        double[] yp={pointStart.getY(), pointEnd.getY()};
+        jLayeredPane1.add(new ComElemJLab(new CompositionLine(xp, yp)));
+        serComField.addElement(new CompositionLine(xp, yp));
+        //Repaints in a closest int rectangle that can fit CompositionLine
+                label1.repaint((int)Math.floor(xp[0]), (int)Math.floor(yp[0]), (int)Math.ceil(xp[1]), (int)Math.ceil(yp[1]));
+    }//GEN-LAST:event_DrawLActionPerformed
+
+    private void DrawRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawRActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DrawRActionPerformed
+
+    private void DrawCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawCustomActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DrawCustomActionPerformed
+
+    private void NewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewActionPerformed
+        int result=JOptionPane.showConfirmDialog(this, //THIS?
+    "Any unsaved progress will be deleted. "
+    + "Do you wish to continue?","Create New",
+    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        if(result==JOptionPane.OK_OPTION){
+            label1.removeAll(); 
+            this.setTitle("New Composition"); //MAY BE INADVISABLE
+        serComField.clearSerCom();
+        }
+        else{
+        //Do Nothing
+    }
+    }//GEN-LAST:event_NewActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem Exit;
+    private javax.swing.JMenuItem CreateCustom;
+    private javax.swing.JMenuItem DrawCustom;
+    private javax.swing.JMenuItem DrawL;
+    private javax.swing.JMenuItem DrawR;
+    private javax.swing.JMenuItem New;
     private javax.swing.JMenuItem Open;
+    private javax.swing.JMenuItem Save;
     private javax.swing.JFileChooser fileChooser;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

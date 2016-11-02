@@ -5,22 +5,30 @@
  */
 package Main;
 
+import java.awt.Shape;
+import javafx.scene.shape.Polyline;
+
 /**
  *
  * @author Alex Nelson
  */
-//ADD METHODS, ABSTRACT OR OTHERWISE, AS DICTATED BY REQUIREMENT
-public abstract class CompositionElement { //ABSTRACT CLASS UNDERLYING ALL LINES AND SHAPES DELINING COMPOSITION
+//FIELDS AND METHODS MAY BE UNECESSARY
+public abstract class CompositionElement  extends Polyline{//ABSTRACT CLASS UNDERLYING ALL LINES AND SHAPES DELINING COMPOSITION
      
-     protected double xPos;
-     protected double yPos;
+    protected double[] xPoints;
+    protected double[] yPoints;
+    protected int numPoints;
      
       
-      public double getElementxPos(){
-          return xPos;
+      public double[] getxPoints(){
+          return xPoints;
       }
     
-      public double getElementyPos(){
-          return yPos;
+      public double[] getyPoints(){
+          return yPoints;
+      }
+      
+      public int getnumPoints(){
+          return numPoints;
       }
 }
