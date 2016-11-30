@@ -28,6 +28,6 @@ public class ImageJLab extends JLabel{
    }
     
     public Icon getIcon(){
-        return icon;
+        return mIcon;
     }
 }

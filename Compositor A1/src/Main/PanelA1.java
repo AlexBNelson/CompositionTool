@@ -5,6 +5,7 @@
  */
 package Main;
 
+import java.awt.Event;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,11 +16,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
+import sun.reflect.generics.tree.Tree;
 
 /**
  *
@@ -31,10 +38,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 //USING PALETTE
 public class PanelA1 extends javax.swing.JFrame {
 
-    
+    private List<JLabel> jLabList; //List containing references to jLabels
     private Point pointStart;//Interim variable for drawing CompositionElements
     private Point pointEnd;//Interim variable for drawing CompositionElements
-    private SerializableComposite serComField;
+    private SerializableComposite serComField;//Serializable class containing array of geometric primitives and base image
+    private List<DefaultMutableTreeNode> nodeList;//List of all the nodes referring to JLabels in the sidebar 
+   private DefaultMutableTreeNode rootNode;//variable used in side menu
+   private DefaultTreeModel treeModel;//variable used in side menu
+//Used as interface for saving and opening
     /**
      * Creates new form NewJFrame
      */
@@ -44,9 +55,16 @@ public class PanelA1 extends javax.swing.JFrame {
         
     }
 private void initUserGen(){// Custom initlialization code
-    jPanel1.add(label1);//WILL NEED TO LOOK INTO PRESENTATION OF LABEL
     
-    
+    rootNode = new DefaultMutableTreeNode("Root Node");
+    treeModel = new DefaultTreeModel(rootNode);
+treeModel.addTreeModelListener(new ElementsTreeListener());
+
+ElementsTree = new JTree(treeModel);
+    ElementsTree.setEditable(true);
+ElementsTree.getSelectionModel().setSelectionMode
+        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+ElementsTree.setShowsRootHandles(true);
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -58,6 +76,10 @@ private void initUserGen(){// Custom initlialization code
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ElementsTree = new javax.swing.JTree();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
@@ -75,16 +97,22 @@ private void initUserGen(){// Custom initlialization code
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jScrollPane1.setViewportView(ElementsTree);
+
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 442, Short.MAX_VALUE)
         );
         jLayeredPane1Layout.setVerticalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 258, Short.MAX_VALUE)
+            .addGap(0, 379, Short.MAX_VALUE)
         );
+
+        jSplitPane1.setRightComponent(jLayeredPane1);
 
         jMenu3.setText("File");
         jMenu3.addActionListener(new java.awt.event.ActionListener() {
@@ -156,11 +184,11 @@ private void initUserGen(){// Custom initlialization code
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1)
+            .addComponent(jSplitPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1)
+            .addComponent(jSplitPane1)
         );
 
         pack();
@@ -177,9 +205,12 @@ private void initUserGen(){// Custom initlialization code
         
         
         try {
-            for(int i=0; i<serComField.getLines().size(); i++) {
-                jLayeredPane1.add(new ComElemJLab(serComField.getLines().get(i)));
             
+            jLabList.add(new ImageJLab(serComField.getImage()));
+            for(int i=0; i<serComField.getLines().size(); i++) {
+                
+                jLabList.add(serComField.getLines().get(i));
+            jLayeredPane1.add(jLabList.get(jLabList.size()-1));
             }
             
           
@@ -200,22 +231,26 @@ private void initUserGen(){// Custom initlialization code
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenu3ActionPerformed
 
+    // LOOK INTO DIFFERENT APPROACHES TO ADDING AND REMOVING MOUSELISTENERS
+    //Code for Drawing Line
     private void DrawLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawLActionPerformed
         //SORT OUT NEW ITEM FIRST
-        label1.addMouseListener(new MouseAdapter() {
+        MouseAdapter ml=new MouseAdapter() {
+                @Override
                 public void mousePressed(MouseEvent e) {
                     pointStart = e.getPoint();
                 }
 
+                @Override
                 public void mouseReleased(MouseEvent e) {
                     pointEnd = e.getPoint();
-                }});
+                }};
+        jLayeredPane1.addMouseListener(ml);
         double[] xp={pointStart.getX(), pointEnd.getX()};
         double[] yp={pointStart.getY(), pointEnd.getY()};
-        jLayeredPane1.add(new ComElemJLab(new CompositionLine(xp, yp)));
-        serComField.addElement(new CompositionLine(xp, yp));
-        //Repaints in a closest int rectangle that can fit CompositionLine
-                label1.repaint((int)Math.floor(xp[0]), (int)Math.floor(yp[0]), (int)Math.ceil(xp[1]), (int)Math.ceil(yp[1]));
+        initializeCEJLab(new LineTracing(xp[0], yp[0], xp[1], yp[1]));
+        
+                jLayeredPane1.removeMouseListener (ml);
     }//GEN-LAST:event_DrawLActionPerformed
 
     private void DrawRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawRActionPerformed
@@ -233,7 +268,8 @@ private void initUserGen(){// Custom initlialization code
     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         
         if(result==JOptionPane.OK_OPTION){
-            label1.removeAll(); 
+            jLayeredPane1.removeAll();
+            jLabList.clear();
             this.setTitle("New Composition"); //MAY BE INADVISABLE
         serComField.clearSerCom();
         }
@@ -241,14 +277,49 @@ private void initUserGen(){// Custom initlialization code
         //Do Nothing
     }
     }//GEN-LAST:event_NewActionPerformed
+//Creates and draws a ComElemJLab component, adding mouseListener etc
+    private void initializeCEJLab(GeneralTracing ce){
+    serComField.addElement(ce);//TRY CLAUSE??
+        jLabList.add(ce);
+jLabList.get(jLabList.size()).addMouseListener(new MouseAdapter(){
+     @Override
+     public void mousePressed(MouseEvent e) {
+        maybeShowPopup(e);
+    }
+
+     @Override
+    public void mouseReleased(MouseEvent e) {
+        maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            jPopupMenu1.show(e.getComponent(),
+                       e.getX(), e.getY());
+        }
+    }
+});
+    jLayeredPane1.add(jLabList.get(jLabList.size()));
+        
+        
+       
+                
+                (jLabList.get(jLabList.size()-1)).setOpaque(false);
+                (jLabList.get(jLabList.size()-1)).repaint();
+                
+                //adds new node to the side menu
+               nodeList.add(new DefaultMutableTreeNode("Element Number " + (Integer.toString(nodeList.size()))));
+                rootNode.add(nodeList.get(nodeList.size()-1));}
 
     
 
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem CreateCustom;
     private javax.swing.JMenuItem DrawCustom;
     private javax.swing.JMenuItem DrawL;
     private javax.swing.JMenuItem DrawR;
+    private javax.swing.JTree ElementsTree;
     private javax.swing.JMenuItem New;
     private javax.swing.JMenuItem Open;
     private javax.swing.JMenuItem Save;
@@ -257,5 +328,8 @@ private void initUserGen(){// Custom initlialization code
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 }

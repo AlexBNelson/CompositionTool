@@ -18,9 +18,9 @@ import java.util.List;
 
 public class SerializableComposite implements java.io.Serializable{
     private BufferedImage image;
-    private List<CompositionElement> lines;
+    private List<GeneralTracing> lines;
 
-    public SerializableComposite(BufferedImage i, List<CompositionElement> l){
+    public SerializableComposite(BufferedImage i, List<GeneralTracing> l){
     image=i;
     lines=l;
     }
@@ -29,17 +29,20 @@ public class SerializableComposite implements java.io.Serializable{
         return image;
     }
     
-    public List<CompositionElement> getLines(){
+    public List<GeneralTracing> getLines(){
         return lines;
     }
     
-    public void addElement(CompositionElement ce){
+    public GeneralTracing getTopComElement(){
+        return lines.get(lines.size()-1);
+    }
+    public void addElement(GeneralTracing ce){
         lines.add(ce);
         
     }
     
     public void clearSerCom(){
-        image=null;
+        image=null;//IS THIS OK?
         lines=null;
     }
 }
