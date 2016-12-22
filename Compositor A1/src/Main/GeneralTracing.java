@@ -7,7 +7,10 @@ package Main;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
 import javax.swing.JLabel;
 
 /**
@@ -18,29 +21,31 @@ import javax.swing.JLabel;
 //Attempt to unify ComElemJLab and CompositionElement
 
 public class GeneralTracing extends JLabel {
-    protected double[] xPoints;
-    protected double[] yPoints;
-    protected int numPoints;
-     
+    //INSTEAD OF HAVING xpoints AND ypoints ARRAYS SIMPLIFY USING tabArray
+   
+    protected ArrayList<DragTab> tabArray;
+      GeneralTracing(double[] xList, double[] yList){
+          for(int i=0; i<xList.length; i++){
+              
+              tabArray.get(i).add(new DragTab(xList[i], yList[i]));
+          
+              }}
       
-      public double[] getxPoints(){
-          return xPoints;
-      }
-    
-      public double[] getyPoints(){
-          return yPoints;
-      }
       
-      public int getnumPoints(){
-          return numPoints;
+      public ArrayList<DragTab> getnumPoints(){
+          return tabArray;
       }
       
    
     
     @Override
     public void paintComponent(Graphics g){
+         super.paintComponent(g);//NECESSARY??
     Graphics2D g2d = (Graphics2D) g;
     g2d.draw(createPath());
+    for(int i=0; i<tabArray.size(); i++){
+        tabArray.get(i).repaint();
+    }
         this.setOpaque(false);//IS THIS GOOD??
     }
     
@@ -53,9 +58,9 @@ public class GeneralTracing extends JLabel {
         Path2D.Double path=new Path2D.Double();
         
        
-    path.moveTo(xPoints[0], yPoints[0]);
-    for(int i=1; i<=numPoints; i++){
-        path.lineTo(xPoints[i], yPoints[i]);
+    path.moveTo(tabArray.get(0).getXloc(), tabArray.get(0).getYloc());
+    for(int i=1; i<=tabArray.size(); i++){
+        path.lineTo(tabArray.get(i).getXloc(), tabArray.get(i).getXloc());
     }
         return path;
 }

@@ -34,8 +34,7 @@ public class ElementsTreeListener implements TreeModelListener  {
                    (node.getChildAt(index));
         } catch (NullPointerException exc) {}
 
-        System.out.println("The user has finished editing the node.");
-        System.out.println("New value: " + node.getUserObject());
+        
     }
     @Override
     public void treeNodesInserted(TreeModelEvent e) {

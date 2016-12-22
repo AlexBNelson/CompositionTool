@@ -63,7 +63,7 @@ treeModel.addTreeModelListener(new ElementsTreeListener());
 ElementsTree = new JTree(treeModel);
     ElementsTree.setEditable(true);
 ElementsTree.getSelectionModel().setSelectionMode
-        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+        (TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 ElementsTree.setShowsRootHandles(true);
 }
     /**
@@ -86,7 +86,7 @@ ElementsTree.setShowsRootHandles(true);
         Open = new javax.swing.JMenuItem();
         Save = new javax.swing.JMenuItem();
         New = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
+        createCustom = new javax.swing.JMenu();
         DrawL = new javax.swing.JMenuItem();
         DrawR = new javax.swing.JMenuItem();
         DrawCustom = new javax.swing.JMenuItem();
@@ -147,7 +147,12 @@ ElementsTree.setShowsRootHandles(true);
 
         jMenuBar2.add(jMenu3);
 
-        jMenu4.setText("Edit");
+        createCustom.setText("Edit");
+        createCustom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createCustomActionPerformed(evt);
+            }
+        });
 
         DrawL.setText("Draw Line");
         DrawL.addActionListener(new java.awt.event.ActionListener() {
@@ -155,7 +160,7 @@ ElementsTree.setShowsRootHandles(true);
                 DrawLActionPerformed(evt);
             }
         });
-        jMenu4.add(DrawL);
+        createCustom.add(DrawL);
 
         DrawR.setText("Draw Rect");
         DrawR.addActionListener(new java.awt.event.ActionListener() {
@@ -163,7 +168,7 @@ ElementsTree.setShowsRootHandles(true);
                 DrawRActionPerformed(evt);
             }
         });
-        jMenu4.add(DrawR);
+        createCustom.add(DrawR);
 
         DrawCustom.setText("Draw Custom");
         DrawCustom.addActionListener(new java.awt.event.ActionListener() {
@@ -171,12 +176,12 @@ ElementsTree.setShowsRootHandles(true);
                 DrawCustomActionPerformed(evt);
             }
         });
-        jMenu4.add(DrawCustom);
+        createCustom.add(DrawCustom);
 
         CreateCustom.setText("Create Custom");
-        jMenu4.add(CreateCustom);
+        createCustom.add(CreateCustom);
 
-        jMenuBar2.add(jMenu4);
+        jMenuBar2.add(createCustom);
 
         setJMenuBar(jMenuBar2);
 
@@ -248,13 +253,25 @@ ElementsTree.setShowsRootHandles(true);
         jLayeredPane1.addMouseListener(ml);
         double[] xp={pointStart.getX(), pointEnd.getX()};
         double[] yp={pointStart.getY(), pointEnd.getY()};
-        initializeCEJLab(new LineTracing(xp[0], yp[0], xp[1], yp[1]));
+        initializeCEJLab(new GeneralTracing(xp, yp));
         
                 jLayeredPane1.removeMouseListener (ml);
     }//GEN-LAST:event_DrawLActionPerformed
 
     private void DrawRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawRActionPerformed
-        // TODO add your handling code here:
+        MouseAdapter ml=new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    pointStart = e.getPoint();
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    pointEnd = e.getPoint();
+                }};        jLayeredPane1.addMouseListener(ml);
+        double[] xp={pointStart.getX(), pointEnd.getX(), pointStart.getX(), pointEnd.getX()};
+        double[] yp={pointStart.getY(), pointEnd.getY(),pointStart.getY(), pointEnd.getY()};
+        initializeCEJLab(new GeneralTracing(xp, yp));
     }//GEN-LAST:event_DrawRActionPerformed
 
     private void DrawCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawCustomActionPerformed
@@ -277,6 +294,10 @@ ElementsTree.setShowsRootHandles(true);
         //Do Nothing
     }
     }//GEN-LAST:event_NewActionPerformed
+
+    private void createCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createCustomActionPerformed
+        
+    }//GEN-LAST:event_createCustomActionPerformed
 //Creates and draws a ComElemJLab component, adding mouseListener etc
     private void initializeCEJLab(GeneralTracing ce){
     serComField.addElement(ce);//TRY CLAUSE??
@@ -323,10 +344,10 @@ jLabList.get(jLabList.size()).addMouseListener(new MouseAdapter(){
     private javax.swing.JMenuItem New;
     private javax.swing.JMenuItem Open;
     private javax.swing.JMenuItem Save;
+    private javax.swing.JMenu createCustom;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;

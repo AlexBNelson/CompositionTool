@@ -27,7 +27,7 @@ public class ImageJLab extends JLabel{
        
    }
     
-    public Icon getIcon(){
+    public Icon acquireIcon(){
         return mIcon;
     }
 }
