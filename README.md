@@ -5,7 +5,7 @@ Images can be traced over by selecting and then drawing particular shapes or 'tr
 
 Images and their 'tracings' are saved by serializing them as a SerializableComposite object using the SerializableComReader class extending MouseAdapter. 
 
-[h1]The main class is CompositorA1 and a list of tasks and potential changes can be found as comments at the top of the class. Informative comments are in lower case, whilst temporary comments are in upper case. PanelA1 contains all the swing presentation components. [/h1]
+## H2 The main class is CompositorA1 and a list of tasks and potential changes can be found as comments at the top of the class. Informative comments are in lower case, whilst temporary comments are in upper case. PanelA1 contains all the swing presentation components. 
 
 I am also learning JUnit testing concurrently with the creation of this project and I hope to implement a fuller testing framework over time.
     
