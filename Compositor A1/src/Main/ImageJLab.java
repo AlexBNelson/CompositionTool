@@ -5,29 +5,42 @@
  */
 package Main;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 
 /**
  *
  * @author Alex Nelson
  */
-public class ImageJLab extends JLabel{ 
-    private Icon mIcon;
-    public ImageJLab(Icon icon){
-        super(icon);
-        mIcon=icon;
+public class ImageJLab extends JLayeredPane{ 
+    
+    
+    
+   private Icon icon;
+
+    public ImageJLab(Icon f) {
+        super();
+        icon=f;
         
-    }
-    
-   public ImageJLab(BufferedImage img){
-       super((Icon)img);
        
-       
-   }
-    
-    public Icon acquireIcon(){
-        return mIcon;
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        
+        
+        icon.paintIcon(this, g, 0, 0);           
+    }
+
 }

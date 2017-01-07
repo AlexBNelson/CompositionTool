@@ -5,28 +5,29 @@
  */
 package Main;
 
-import java.awt.Event;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-import sun.reflect.generics.tree.Tree;
 
 /**
  *
@@ -38,13 +39,17 @@ import sun.reflect.generics.tree.Tree;
 //USING PALETTE
 public class PanelA1 extends javax.swing.JFrame {
 
-    private List<JLabel> jLabList; //List containing references to jLabels
+    private List<JLayeredPane> visualComponentList; //List containing references to jLabels
     private Point pointStart;//Interim variable for drawing CompositionElements
     private Point pointEnd;//Interim variable for drawing CompositionElements
-    private SerializableComposite serComField;//Serializable class containing array of geometric primitives and base image
+    private SerializableComposite serComField; //Serializable class containing array of geometric primitives and base image
     private List<DefaultMutableTreeNode> nodeList;//List of all the nodes referring to JLabels in the sidebar 
    private DefaultMutableTreeNode rootNode;//variable used in side menu
    private DefaultTreeModel treeModel;//variable used in side menu
+   private File file; //the image file converted to ImageJLab
+   private BufferedImage buffImg;
+   private ImageJLab baseLabel;
+   private String Url=null; //The url of the base image
 //Used as interface for saving and opening
     /**
      * Creates new form NewJFrame
@@ -86,14 +91,13 @@ ElementsTree.setShowsRootHandles(true);
         Open = new javax.swing.JMenuItem();
         Save = new javax.swing.JMenuItem();
         New = new javax.swing.JMenuItem();
-        createCustom = new javax.swing.JMenu();
+        AddImage = new javax.swing.JMenu();
         DrawL = new javax.swing.JMenuItem();
         DrawR = new javax.swing.JMenuItem();
         DrawCustom = new javax.swing.JMenuItem();
         CreateCustom = new javax.swing.JMenuItem();
 
-        fileChooser.setDialogTitle("This is my open dialog");
-        fileChooser.setFileFilter(new MyCustomFilter());
+        fileChooser.setDialogTitle(null);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -147,10 +151,10 @@ ElementsTree.setShowsRootHandles(true);
 
         jMenuBar2.add(jMenu3);
 
-        createCustom.setText("Edit");
-        createCustom.addActionListener(new java.awt.event.ActionListener() {
+        AddImage.setText("Edit");
+        AddImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createCustomActionPerformed(evt);
+                AddImageActionPerformed(evt);
             }
         });
 
@@ -160,7 +164,7 @@ ElementsTree.setShowsRootHandles(true);
                 DrawLActionPerformed(evt);
             }
         });
-        createCustom.add(DrawL);
+        AddImage.add(DrawL);
 
         DrawR.setText("Draw Rect");
         DrawR.addActionListener(new java.awt.event.ActionListener() {
@@ -168,7 +172,7 @@ ElementsTree.setShowsRootHandles(true);
                 DrawRActionPerformed(evt);
             }
         });
-        createCustom.add(DrawR);
+        AddImage.add(DrawR);
 
         DrawCustom.setText("Draw Custom");
         DrawCustom.addActionListener(new java.awt.event.ActionListener() {
@@ -176,12 +180,12 @@ ElementsTree.setShowsRootHandles(true);
                 DrawCustomActionPerformed(evt);
             }
         });
-        createCustom.add(DrawCustom);
+        AddImage.add(DrawCustom);
 
         CreateCustom.setText("Create Custom");
-        createCustom.add(CreateCustom);
+        AddImage.add(CreateCustom);
 
-        jMenuBar2.add(createCustom);
+        jMenuBar2.add(AddImage);
 
         setJMenuBar(jMenuBar2);
 
@@ -202,6 +206,8 @@ ElementsTree.setShowsRootHandles(true);
     private void OpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenActionPerformed
         //Opens and deserializes image/composition composite placing
         //it in the CompositeLabel label1 in the JPanel
+        //SET SERIALIZABE FileFilter
+        fileChooser.setDialogTitle("Open");
         int returnVal = fileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
         File file = fileChooser.getSelectedFile();
@@ -211,11 +217,11 @@ ElementsTree.setShowsRootHandles(true);
         
         try {
             
-            jLabList.add(new ImageJLab(serComField.getImage()));
+            visualComponentList.add(new ImageJLab(serComField.getIcon()));
             for(int i=0; i<serComField.getLines().size(); i++) {
                 
-                jLabList.add(serComField.getLines().get(i));
-            jLayeredPane1.add(jLabList.get(jLabList.size()-1));
+                visualComponentList.add(serComField.getLines().get(i));
+            jLayeredPane1.add(visualComponentList.get(visualComponentList.size()-1));
             }
             
           
@@ -228,81 +234,140 @@ ElementsTree.setShowsRootHandles(true);
     }//GEN-LAST:event_OpenActionPerformed
 
     private void SaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveActionPerformed
-        fileChooser.showSaveDialog(this);//PUT IN TRY STATEMENT FOR Headless EXCEPTION??
-            
+        fileChooser.setDialogTitle("Save");
+        if(serComField!=null){fileChooser.showSaveDialog(this);}//PUT IN TRY STATEMENT FOR Headless EXCEPTION??
+        else{
+            JOptionPane.showMessageDialog(null, "No working file");
+        }
     }//GEN-LAST:event_SaveActionPerformed
 
     private void jMenu3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenu3ActionPerformed
 
-    // LOOK INTO DIFFERENT APPROACHES TO ADDING AND REMOVING MOUSELISTENERS
-    //Code for Drawing Line
-    private void DrawLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawLActionPerformed
-        //SORT OUT NEW ITEM FIRST
-        MouseAdapter ml=new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    pointStart = e.getPoint();
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    pointEnd = e.getPoint();
-                }};
-        jLayeredPane1.addMouseListener(ml);
-        double[] xp={pointStart.getX(), pointEnd.getX()};
-        double[] yp={pointStart.getY(), pointEnd.getY()};
-        initializeCEJLab(new GeneralTracing(xp, yp));
+    private void NewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewActionPerformed
         
-                jLayeredPane1.removeMouseListener (ml);
-    }//GEN-LAST:event_DrawLActionPerformed
+        int result;//GARBAGE COLLECTION??
+        if(serComField!=null){result=JOptionPane.showConfirmDialog(this, 
+    "Any unsaved progress will be deleted. "
+    + "Do you wish to continue?","Create New",
+    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);}
+        else{
+            result=JOptionPane.OK_OPTION;
+        }
+        if(result==JOptionPane.OK_OPTION){
+            jLayeredPane1.removeAll();
+            //THROWING EXCEPTION WHEN TRYING TO CLEAR NULL POINTERS
+            if(visualComponentList!=null){visualComponentList.clear();}
+            if(serComField!=null){serComField.clearSerCom();}
+            this.setTitle("New Composition"); //MAY BE INADVISABLE
+        
+        }
+        else{
+        //Do Nothing
+    }
+        
+         
+         fileChooser.setDialogTitle("Open Image");
+         
+        int returnVal=fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        Url= fileChooser.getSelectedFile().getAbsolutePath();}
+        //System.out.println(Url); confirms that url is obtained successfully
+       
+        
+       ImageIcon icon = createImageIcon(Url);
+       serComField=new SerializableComposite(icon);
+        
+         baseLabel=new ImageJLab(icon);//ALL THIS WILL NEED RATIONALISING
+         baseLabel.setBounds(0, 0, 500, 500);
+       jLayeredPane1.add(baseLabel);
+       jLayeredPane1.repaint();
+       
+        
+        
+        
+    }//GEN-LAST:event_NewActionPerformed
+    
+   
+    protected ImageIcon createImageIcon(String path) {//function to which the code for creating and resizing the icon to fit the screen is delegated
+    //BufferedImage bimg=null; 
+        
+        //BufferedImage dimg=null;
+        //try {
+           // bimg = ImageIO.read(new File(Url));
+            
+       // dimg = bimg.getScaledInstance(width, height,
+        //Image.SCALE_SMOOTH);
+        //} catch (IOException ex) {
+           // Logger.getLogger(PanelA1.class.getName()).log(Level.SEVERE, null, ex);
+       // }
+        
+    if (path != null) {// 300 AS WIDTH AND HEIGHT ARE MAGIC NUMBERS, PARAMETERIZE??
+        return new ImageIcon(new ImageIcon(path).getImage().getScaledInstance(400, 300, Image.SCALE_DEFAULT));
+    } else {
+        
+        return null;
+    }
 
-    private void DrawRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawRActionPerformed
-        MouseAdapter ml=new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    pointStart = e.getPoint();
-                }
+}
+    private void AddImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddImageActionPerformed
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    pointEnd = e.getPoint();
-                }};        jLayeredPane1.addMouseListener(ml);
-        double[] xp={pointStart.getX(), pointEnd.getX(), pointStart.getX(), pointEnd.getX()};
-        double[] yp={pointStart.getY(), pointEnd.getY(),pointStart.getY(), pointEnd.getY()};
-        initializeCEJLab(new GeneralTracing(xp, yp));
-    }//GEN-LAST:event_DrawRActionPerformed
+    }//GEN-LAST:event_AddImageActionPerformed
 
     private void DrawCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawCustomActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_DrawCustomActionPerformed
 
-    private void NewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewActionPerformed
-        int result=JOptionPane.showConfirmDialog(this, //THIS?
-    "Any unsaved progress will be deleted. "
-    + "Do you wish to continue?","Create New",
-    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-        
-        if(result==JOptionPane.OK_OPTION){
-            jLayeredPane1.removeAll();
-            jLabList.clear();
-            this.setTitle("New Composition"); //MAY BE INADVISABLE
-        serComField.clearSerCom();
-        }
-        else{
-        //Do Nothing
-    }
-    }//GEN-LAST:event_NewActionPerformed
+    private void DrawRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawRActionPerformed
+        MouseAdapter ml=new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pointStart = e.getPoint();
+            }
 
-    private void createCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createCustomActionPerformed
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                pointEnd = e.getPoint();
+            }};        jLayeredPane1.addMouseListener(ml);
+            double[] xp={pointStart.getX(), pointEnd.getX(), pointStart.getX(), pointEnd.getX()};
+            double[] yp={pointStart.getY(), pointEnd.getY(),pointStart.getY(), pointEnd.getY()};
+            initializeCEJLab(new GeneralTracing(xp, yp));
+    }//GEN-LAST:event_DrawRActionPerformed
+
+    // LOOK INTO DIFFERENT APPROACHES TO ADDING AND REMOVING MOUSELISTENERS
+    
+    public void paintComponent(){
+        super.repaint();
+    }
+    //Code for Drawing Line
+    private void DrawLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawLActionPerformed
+        //SORT OUT NEW ITEM FIRST
         
-    }//GEN-LAST:event_createCustomActionPerformed
+        MouseAdapter ml;
+        ml = new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pointStart = e.getPoint();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                pointEnd = e.getPoint();
+                double[] xp={pointStart.getX(), pointEnd.getX()};
+                double[] yp={pointStart.getY(), pointEnd.getY()};
+                initializeCEJLab(new GeneralTracing(xp, yp));
+                jLayeredPane1.removeMouseListener(this);
+                
+            }};
+            jLayeredPane1.addMouseListener(ml);
+            
+    }//GEN-LAST:event_DrawLActionPerformed
 //Creates and draws a ComElemJLab component, adding mouseListener etc
     private void initializeCEJLab(GeneralTracing ce){
     serComField.addElement(ce);//TRY CLAUSE??
-        jLabList.add(ce);
-jLabList.get(jLabList.size()).addMouseListener(new MouseAdapter(){
+        visualComponentList.add(ce);
+visualComponentList.get(visualComponentList.size()).addMouseListener(new MouseAdapter(){
      @Override
      public void mousePressed(MouseEvent e) {
         maybeShowPopup(e);
@@ -320,13 +385,13 @@ jLabList.get(jLabList.size()).addMouseListener(new MouseAdapter(){
         }
     }
 });
-    jLayeredPane1.add(jLabList.get(jLabList.size()));
+    jLayeredPane1.add(visualComponentList.get(visualComponentList.size()));
         
         
        
                 
-                (jLabList.get(jLabList.size()-1)).setOpaque(false);
-                (jLabList.get(jLabList.size()-1)).repaint();
+                (visualComponentList.get(visualComponentList.size()-1)).setOpaque(false);
+                (visualComponentList.get(visualComponentList.size()-1)).repaint();
                 
                 //adds new node to the side menu
                nodeList.add(new DefaultMutableTreeNode("Element Number " + (Integer.toString(nodeList.size()))));
@@ -336,6 +401,7 @@ jLabList.get(jLabList.size()).addMouseListener(new MouseAdapter(){
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu AddImage;
     private javax.swing.JMenuItem CreateCustom;
     private javax.swing.JMenuItem DrawCustom;
     private javax.swing.JMenuItem DrawL;
@@ -344,7 +410,6 @@ jLabList.get(jLabList.size()).addMouseListener(new MouseAdapter(){
     private javax.swing.JMenuItem New;
     private javax.swing.JMenuItem Open;
     private javax.swing.JMenuItem Save;
-    private javax.swing.JMenu createCustom;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JMenu jMenu3;

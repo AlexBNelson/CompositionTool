@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 
 /**
  *
@@ -20,10 +21,16 @@ import javax.swing.JLabel;
 
 //Attempt to unify ComElemJLab and CompositionElement
 
-public class GeneralTracing extends JLabel {
+public class GeneralTracing extends JLayeredPane {
     //INSTEAD OF HAVING xpoints AND ypoints ARRAYS SIMPLIFY USING tabArray
    
     protected ArrayList<DragTab> tabArray;
+     
+    
+    
+   
+    
+    
       GeneralTracing(double[] xList, double[] yList){
           for(int i=0; i<xList.length; i++){
               
@@ -31,12 +38,17 @@ public class GeneralTracing extends JLabel {
           
               }}
       
+      GeneralTracing(){};
       
       public ArrayList<DragTab> getnumPoints(){
           return tabArray;
       }
       
-   
+   public void parseEquation(String equation){
+       for(int i=0; i<equation.length(); i++){
+           
+       }
+   }
     
     @Override
     public void paintComponent(Graphics g){
@@ -52,7 +64,7 @@ public class GeneralTracing extends JLabel {
 
 
 // Private function to which the logic for the creation of a path
-// is delegated
+// is delegated-used in the draw method
     private Path2D.Double createPath(){
         
         Path2D.Double path=new Path2D.Double();

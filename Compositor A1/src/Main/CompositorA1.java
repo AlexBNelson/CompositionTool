@@ -33,6 +33,9 @@ package Main;
 //AS A COMPONENT OR PART OF A COMPONENT
 //FOR GEOMETRY ETC USE http://tsusiatsoftware.net/
 //MAYBE HAVE STYLE FOR LINES
+//OVERCOME "file access cancelled by user" ERROR
+//GET RID OF ImageJLab AND JUST HAVE THE BASE LayeredPane1 DISPLAY THE IMAGE
+//RATIONALISE THE IMAGE LABEL 
 public class CompositorA1 {
 
     /**
@@ -65,6 +68,7 @@ public class CompositorA1 {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new PanelA1().setVisible(true);
             }

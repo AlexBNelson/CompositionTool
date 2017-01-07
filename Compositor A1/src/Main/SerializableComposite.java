@@ -8,6 +8,7 @@ package Main;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import javax.swing.Icon;
 
 
 
@@ -17,22 +18,33 @@ import java.util.List;
  */
 
 public class SerializableComposite implements java.io.Serializable{
-    private BufferedImage image;
+    private Icon image;
     private List<GeneralTracing> lines;
 
-    public SerializableComposite(BufferedImage i, List<GeneralTracing> l){
+    public SerializableComposite(Icon i){
     image=i;
-    lines=l;
+    
     }
-   
-    public BufferedImage getImage(){
+   public SerializableComposite(Icon i, List<GeneralTracing> l){
+       image=i;
+       lines=l;
+   }
+    public Icon getIcon(){
         return image;
     }
     
     public List<GeneralTracing> getLines(){
         return lines;
     }
-    
+    //should not be necessary because image is added in constructor public void addIcon(Icon icon){
+      //  if(image==null){
+        //    image=icon;
+       // }
+        //else{
+       //     throw new IllegalArgumentException("there is already an icon loaded in SerializableComposite");
+       // }
+        
+    //}
     public GeneralTracing getTopComElement(){
         return lines.get(lines.size()-1);
     }
