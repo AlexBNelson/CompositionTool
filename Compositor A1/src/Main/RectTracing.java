@@ -1,48 +1,41 @@
-package Main;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package Main;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  *
  * @author Alex Nelson
  */
-public class LineTracing extends GeneralTracing{
+public class RectTracing extends GeneralTracing {
     
-   Line2D.Double tLine;
    private final Icon icon;
   //xp[0] is NOT NECESSARILY SMALLER THAN xp[1]  
 
     //equationFlag used simply to indicate that input is an equation
-    public LineTracing(double xStart, double xEnd, double m, double c, int equationFlag) {
+    public RectTracing(double xStart, double xEnd, double m, double c, int equationFlag) {
         super();
         tabArray.clear();
         setEquation(xStart, xEnd, m, c);
         icon=new ImageIcon();
     }
-    public LineTracing(Line2D.Double line){
+    public RectTracing(Line2D.Double line){
         super();
         tabArray.clear();
-        tLine=line;
+       
         icon=new ImageIcon();
     }
-    public LineTracing(int xStart, int xEnd, int yStart, int yEnd){
+    public RectTracing(int xStart, int xEnd, int yStart, int yEnd){
         super();
         tabArray.clear();
         int xWidth;
@@ -59,7 +52,7 @@ public class LineTracing extends GeneralTracing{
         else{
             yWidth=yEnd-yStart;
         }
-        BufferedImage bf1=processImage(new BufferedImage(xWidth, yWidth, BufferedImage.TYPE_INT_ARGB), xStart, xEnd, yStart, yEnd);
+        BufferedImage bf1=processImage(new BufferedImage(xWidth+10, yWidth+10, BufferedImage.TYPE_INT_ARGB), xStart, xEnd, yStart, yEnd);
     icon=new ImageIcon(bf1);
     }
     //The information required to get the equation of a line finite at both ends
@@ -74,29 +67,29 @@ public class LineTracing extends GeneralTracing{
         int h = old.getHeight();
         int xOrig;
         int yOrig;
-        int xLast;
-        int yLast;
+        int xWidth;
+        int yWidth;
         if(xEnd>xStart){
             xOrig=0;
-            xLast=xEnd-xStart;
+            xWidth=xEnd-xStart;
         }
         else{
-            xLast=0;
-            xOrig=xStart-xEnd;
+            xWidth=xStart-xEnd;
+            
         }
         if(yEnd>yStart){
-            yOrig=0;
-            yLast=yEnd-yStart;
+            
+            yWidth=yEnd-yStart;
         }
         else{
-            yLast=0;
-            yOrig=yStart-yEnd;
+            
+            yWidth=yStart-yEnd;
         }
         BufferedImage img = new BufferedImage(
-                w, h, BufferedImage.TYPE_INT_ARGB);
+                w+50, h+50, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = img.createGraphics();
-        g2d.drawImage(old, 0, 0, null);
-        g2d.drawLine(xOrig, yOrig, xLast, yLast);
+        //g2d.drawImage(old, 0, 0, null);
+        g2d.drawRect(0, 0, xWidth-1, yWidth-1);
         
         
         

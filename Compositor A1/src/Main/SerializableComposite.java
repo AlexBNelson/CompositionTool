@@ -7,6 +7,7 @@ package Main;
 
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
 
@@ -18,18 +19,18 @@ import javax.swing.Icon;
  */
 
 public class SerializableComposite implements java.io.Serializable{
-    private Icon image;
-    private List<GeneralTracing> lines;
+    private ImageJLab image;
+    private ArrayList<GeneralTracing> lines;
 
-    public SerializableComposite(Icon i){
+    public SerializableComposite(ImageJLab i){
     image=i;
-    
+    lines=new ArrayList<>();
     }
-   public SerializableComposite(Icon i, List<GeneralTracing> l){
+   public SerializableComposite(ImageJLab i, ArrayList<GeneralTracing> l){
        image=i;
        lines=l;
    }
-    public Icon getIcon(){
+    public ImageJLab getImageJLab(){
         return image;
     }
     

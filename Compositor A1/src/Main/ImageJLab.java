@@ -25,7 +25,7 @@ public class ImageJLab extends JLayeredPane{
     
     
     
-   private Icon icon;
+   private final Icon icon;
 
     public ImageJLab(Icon f) {
         super();

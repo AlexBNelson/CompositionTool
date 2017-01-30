@@ -12,18 +12,22 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/test/Main/TestJUnit.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/TracingNode.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/test/Main/TestImageRead.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/CompositorA1.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/PanelA1.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/DragTab.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/SerializableComReader.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/RectTracing.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/test/Main/TestRunner.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/LineTracing.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/ImageJLab.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/MyCustomFilter.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/SerializableComWriter.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/test/Main/TestJUnit.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/DragTab.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/LineTracing.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/GeneralTracing.java</file>
             <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/ElementsTreeListener.java</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/Test_Image.png</file>
-            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/MyCustomFilter.java</file>
+            <file>file:/C:/Users/Alex%20Nelson/Documents/NetBeansProjects/Compositor%20A1/src/Main/SerializableComposite.java</file>
         </group>
     </open-files>
 </project-private>

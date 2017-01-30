@@ -5,28 +5,38 @@
  */
 package Main;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 /**
@@ -39,15 +49,21 @@ import javax.swing.tree.TreeSelectionModel;
 //USING PALETTE
 public class PanelA1 extends javax.swing.JFrame {
 
-    private List<JLayeredPane> visualComponentList; //List containing references to jLabels
-    private Point pointStart;//Interim variable for drawing CompositionElements
-    private Point pointEnd;//Interim variable for drawing CompositionElements
+    private ArrayList<JLabel> visualComponentList; //List containing references to jLabels
+    //PUBLIC ??
+    private int pointXStart;//Interim variable for drawing CompositionElements
+    private int pointYStart;
+    private int pointXEnd;//Interim variable for drawing CompositionElements
+    private int pointYEnd;
+    private DefaultMutableTreeNode tracing;
     private SerializableComposite serComField; //Serializable class containing array of geometric primitives and base image
-    private List<DefaultMutableTreeNode> nodeList;//List of all the nodes referring to JLabels in the sidebar 
-   private DefaultMutableTreeNode rootNode;//variable used in side menu
+    private ArrayList<DefaultMutableTreeNode> nodeList;//List of all the nodes referring to JLabels in the sidebar 
+    private DefaultMutableTreeNode rootNode;
+    private DefaultMutableTreeNode topNode; //node just below rootNode
    private DefaultTreeModel treeModel;//variable used in side menu
    private File file; //the image file converted to ImageJLab
    private BufferedImage buffImg;
+   private DefaultTreeModel defModel;
    private ImageJLab baseLabel;
    private String Url=null; //The url of the base image
 //Used as interface for saving and opening
@@ -61,15 +77,12 @@ public class PanelA1 extends javax.swing.JFrame {
     }
 private void initUserGen(){// Custom initlialization code
     
-    rootNode = new DefaultMutableTreeNode("Root Node");
-    treeModel = new DefaultTreeModel(rootNode);
-treeModel.addTreeModelListener(new ElementsTreeListener());
+pointXStart=0;
+pointXEnd=0;
+pointYStart=0;
+pointXEnd=0;
+topNode=new DefaultMutableTreeNode("Tracings");
 
-ElementsTree = new JTree(treeModel);
-    ElementsTree.setEditable(true);
-ElementsTree.getSelectionModel().setSelectionMode
-        (TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-ElementsTree.setShowsRootHandles(true);
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -82,9 +95,18 @@ ElementsTree.setShowsRootHandles(true);
 
         fileChooser = new javax.swing.JFileChooser();
         jPopupMenu1 = new javax.swing.JPopupMenu();
+        NodeClickMenu = new javax.swing.JPopupMenu();
+        ChangeColor = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        jColorChooser1 = new javax.swing.JColorChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        ElementsTree = new javax.swing.JTree();
+        rootNode=new DefaultMutableTreeNode("Tracing");
+        ElementsTree = new javax.swing.JTree(rootNode);
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
@@ -99,8 +121,27 @@ ElementsTree.setShowsRootHandles(true);
 
         fileChooser.setDialogTitle(null);
 
+        ChangeColor.setText("Change Color");
+        ChangeColor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ChangeColorActionPerformed(evt);
+            }
+        });
+        NodeClickMenu.add(ChangeColor);
+
+        jMenuItem1.setText("jMenuItem1");
+
+        jMenuItem2.setText("jMenuItem2");
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        ElementsTree.setEditable(true);
         jScrollPane1.setViewportView(ElementsTree);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
@@ -207,6 +248,7 @@ ElementsTree.setShowsRootHandles(true);
         //Opens and deserializes image/composition composite placing
         //it in the CompositeLabel label1 in the JPanel
         //SET SERIALIZABE FileFilter
+        //WILL NEED TO BE EXTENSIVELY UPDATED
         fileChooser.setDialogTitle("Open");
         int returnVal = fileChooser.showOpenDialog(this);
     if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -217,7 +259,7 @@ ElementsTree.setShowsRootHandles(true);
         
         try {
             
-            visualComponentList.add(new ImageJLab(serComField.getIcon()));
+            baseLabel=serComField.getImageJLab();
             for(int i=0; i<serComField.getLines().size(); i++) {
                 
                 visualComponentList.add(serComField.getLines().get(i));
@@ -230,6 +272,7 @@ ElementsTree.setShowsRootHandles(true);
         }
     } else {
         System.out.println("File access cancelled by user.");
+        JOptionPane.showMessageDialog(null, "Incompatible file");
     }
     }//GEN-LAST:event_OpenActionPerformed
 
@@ -277,14 +320,51 @@ ElementsTree.setShowsRootHandles(true);
        
         
        ImageIcon icon = createImageIcon(Url);
-       serComField=new SerializableComposite(icon);
+       
         
          baseLabel=new ImageJLab(icon);//ALL THIS WILL NEED RATIONALISING
          baseLabel.setBounds(0, 0, 500, 500);
+         //jLayeredPane1.setLayout(null);//ALLOWING ME TO USE THE MANUAL SetSize() METHOD
+         
+         
+         
        jLayeredPane1.add(baseLabel);
        jLayeredPane1.repaint();
-       
+       serComField=new SerializableComposite(baseLabel);
+       visualComponentList=new ArrayList<>();
+       nodeList=new ArrayList<>();
+       //Code for creation of tree
+      // ElementsTree.setEditable(true);
+    //rootNode = new DefaultMutableTreeNode("Root Node");
+    //treeModel = new DefaultTreeModel(null);
+//treeModel.addTreeModelListener(new ElementsTreeListener());
+
+//ElementsTree = new JTree(rootNode);
+//ElementsTree.setModel(treeModel);
+//rootNode.add(new DefaultMutableTreeNode("Books for Java Programmers"));
+//ElementsTree.setRootVisible(false);
+
+    
+//ElementsTree.getSelectionModel().setSelectionMode
+       // (TreeSelectionModel.SINGLE_TREE_SELECTION);
+       // rootNode.add(topNode);
+//ElementsTree.addTreeSelectionListener(new TreeSelectionListener() {
+   //@Override
+    //public void valueChanged(TreeSelectionEvent e) {
+        //DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+        //                   ElementsTree.getLastSelectedPathComponent();
+
+    /* if nothing is selected */ 
+     //   if (node == null) return;
+
+    /* retrieve the node that was selected */ 
+    //    Object nodeInfo = node.getUserObject();
         
+    /* React to the node selection. */
+    //ADD LISTENER FOR TRACING HERE
+    //}
+//});
+
         
         
     }//GEN-LAST:event_NewActionPerformed
@@ -320,19 +400,66 @@ ElementsTree.setShowsRootHandles(true);
     }//GEN-LAST:event_DrawCustomActionPerformed
 
     private void DrawRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DrawRActionPerformed
-        MouseAdapter ml=new MouseAdapter() {
+        MouseAdapter ml;
+        ml = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                pointStart = e.getPoint();
+                jLayeredPane1.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                pointXStart = e.getX();
+                pointYStart=e.getY();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                pointEnd = e.getPoint();
-            }};        jLayeredPane1.addMouseListener(ml);
-            double[] xp={pointStart.getX(), pointEnd.getX(), pointStart.getX(), pointEnd.getX()};
-            double[] yp={pointStart.getY(), pointEnd.getY(),pointStart.getY(), pointEnd.getY()};
-            initializeCEJLab(new GeneralTracing(xp, yp));
+                pointXEnd = e.getX();
+                pointYEnd=e.getY();
+                
+                RectTracing linet=new RectTracing(pointXStart, pointXEnd, pointYStart, pointYEnd);
+                
+              int xOrigin;//For SetBounds() method
+              int yOrigin;//For SetBounds() method
+              int xWidth;//For SetBounds() method
+              int yWidth;//For SetBounds() method
+                
+        if (pointXStart>pointXEnd){
+ 
+            xWidth=pointXStart-pointXEnd;
+            xOrigin=pointXEnd;
+        }
+        else{
+            xWidth=pointXEnd-pointXStart;
+            xOrigin=pointXStart;
+        }
+        if(pointYStart>pointYEnd){
+            yWidth=pointYStart-pointYEnd;
+            yOrigin=pointYEnd;
+        }
+        else{
+            yWidth=pointYEnd-pointYStart;
+            yOrigin=pointYStart;
+        }
+                linet.setBounds(xOrigin, yOrigin, xWidth, yWidth);
+                //initializeCEJLab(linet);//MAYBE NEED A WAY OF ENSURING xp[1] IS BIGGER THAN xp[0]
+                visualComponentList.add(linet);
+                
+                jLayeredPane1.add(visualComponentList.get(visualComponentList.size()-1));
+               
+                jLayeredPane1.moveToFront(visualComponentList.get(visualComponentList.size()-1));
+                
+     
+     
+    
+               jLayeredPane1.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));//NOT SURE WHETHER THERE IS AN OPTIMAL ORDER FOR THESE ACTIONS
+                jLayeredPane1.removeMouseListener(this);
+               jLayeredPane1.repaint();
+              DefaultTreeModel model = (DefaultTreeModel) ElementsTree.getModel();  
+            //tracing= new TracingNode("Rect Tracing" + " " + Integer.toString(visualComponentList.size()), visualComponentList.size()-1);
+            tracing=new TracingNode("Rect Tracing" + Integer.toString(visualComponentList.size()), visualComponentList.get(visualComponentList.size()-1), NodeClickMenu);
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+root.add(tracing);
+model.reload(root);
+        }};
+            jLayeredPane1.addMouseListener(ml);
     }//GEN-LAST:event_DrawRActionPerformed
 
     // LOOK INTO DIFFERENT APPROACHES TO ADDING AND REMOVING MOUSELISTENERS
@@ -348,72 +475,102 @@ ElementsTree.setShowsRootHandles(true);
         ml = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                pointStart = e.getPoint();
+                jLayeredPane1.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                pointXStart = e.getX();
+                pointYStart=e.getY();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                pointEnd = e.getPoint();
-                double[] xp={pointStart.getX(), pointEnd.getX()};
-                double[] yp={pointStart.getY(), pointEnd.getY()};
-                initializeCEJLab(new GeneralTracing(xp, yp));
-                jLayeredPane1.removeMouseListener(this);
+                pointXEnd = e.getX();
+                pointYEnd=e.getY();
                 
-            }};
+                LineTracing linet=new LineTracing(pointXStart, pointXEnd, pointYStart, pointYEnd);
+                
+              int xOrigin;//For SetBounds() method
+              int yOrigin;//For SetBounds() method
+              int xWidth;//For SetBounds() method
+              int yWidth;//For SetBounds() method
+                
+        if (pointXStart>pointXEnd){
+ 
+            xWidth=pointXStart-pointXEnd;
+            xOrigin=pointXEnd;
+        }
+        else{
+            xWidth=pointXEnd-pointXStart;
+            xOrigin=pointXStart;
+        }
+        if(pointYStart>pointYEnd){
+            yWidth=pointYStart-pointYEnd;
+            yOrigin=pointYEnd;
+        }
+        else{
+            yWidth=pointYEnd-pointYStart;
+            yOrigin=pointYStart;
+        }
+                linet.setBounds(xOrigin, yOrigin, xWidth, yWidth);
+                //initializeCEJLab(linet);//MAYBE NEED A WAY OF ENSURING xp[1] IS BIGGER THAN xp[0]
+                visualComponentList.add(linet);
+                
+                jLayeredPane1.add(visualComponentList.get(visualComponentList.size()-1));
+               
+                jLayeredPane1.moveToFront(visualComponentList.get(visualComponentList.size()-1));
+                
+     
+     
+    
+               jLayeredPane1.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));//NOT SURE WHETHER THERE IS AN OPTIMAL ORDER FOR THESE ACTIONS
+                jLayeredPane1.removeMouseListener(this);
+               jLayeredPane1.repaint();
+              DefaultTreeModel model = (DefaultTreeModel) ElementsTree.getModel();  
+           // tracing= new TracingNode("Line Tracing" + " " + Integer.toString(visualComponentList.size()), visualComponentList.size()-1);
+            tracing=new TracingNode("Line tracing" + Integer.toString(visualComponentList.size()), visualComponentList.get(visualComponentList.size()-1), NodeClickMenu);
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+root.add(tracing);
+model.reload(root);
+        }};
             jLayeredPane1.addMouseListener(ml);
             
+            
     }//GEN-LAST:event_DrawLActionPerformed
-//Creates and draws a ComElemJLab component, adding mouseListener etc
-    private void initializeCEJLab(GeneralTracing ce){
-    serComField.addElement(ce);//TRY CLAUSE??
-        visualComponentList.add(ce);
-visualComponentList.get(visualComponentList.size()).addMouseListener(new MouseAdapter(){
-     @Override
-     public void mousePressed(MouseEvent e) {
-        maybeShowPopup(e);
-    }
 
-     @Override
-    public void mouseReleased(MouseEvent e) {
-        maybeShowPopup(e);
-    }
-
-    private void maybeShowPopup(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            jPopupMenu1.show(e.getComponent(),
-                       e.getX(), e.getY());
-        }
-    }
-});
-    jLayeredPane1.add(visualComponentList.get(visualComponentList.size()));
-        
-        
-       
-                
-                (visualComponentList.get(visualComponentList.size()-1)).setOpaque(false);
-                (visualComponentList.get(visualComponentList.size()-1)).repaint();
+    private void ChangeColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeColorActionPerformed
+        Color current=new Color(1,1, 1);
+        jColorChooser1.showDialog(null, "Choose a color", current);//third argument is initial color
+    }//GEN-LAST:event_ChangeColorActionPerformed
+//Creates and draws a GeneralTracing component, adding mouseListener for menu tree 
+    private void addToTree (JLabel ce){
+    
                 
                 //adds new node to the side menu
-               nodeList.add(new DefaultMutableTreeNode("Element Number " + (Integer.toString(nodeList.size()))));
+               
                 rootNode.add(nodeList.get(nodeList.size()-1));}
-
-    
+ 
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu AddImage;
+    private javax.swing.JMenuItem ChangeColor;
     private javax.swing.JMenuItem CreateCustom;
     private javax.swing.JMenuItem DrawCustom;
     private javax.swing.JMenuItem DrawL;
     private javax.swing.JMenuItem DrawR;
     private javax.swing.JTree ElementsTree;
     private javax.swing.JMenuItem New;
+    private javax.swing.JPopupMenu NodeClickMenu;
     private javax.swing.JMenuItem Open;
     private javax.swing.JMenuItem Save;
     private javax.swing.JFileChooser fileChooser;
+    private javax.swing.JColorChooser jColorChooser1;
     private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
