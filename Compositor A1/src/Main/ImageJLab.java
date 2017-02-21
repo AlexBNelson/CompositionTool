@@ -21,6 +21,7 @@ import javax.swing.JLayeredPane;
  *
  * @author Alex Nelson
  */
+//class extending jLayeredPane which displays image passed to it as icon
 public class ImageJLab extends JLayeredPane{ 
     
     
