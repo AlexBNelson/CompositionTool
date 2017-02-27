@@ -29,7 +29,7 @@ public class LineTracing extends GeneralTracing{
    private final Icon icon;
   //xp[0] is NOT NECESSARILY SMALLER THAN xp[1]  
 
-    //equationFlag used simply to indicate that input is an equation
+    //equationFlag is used simply to indicate that input is an equation
     public LineTracing(double xStart, double xEnd, double m, double c, int equationFlag) {
         super();
         tabArray.clear();
